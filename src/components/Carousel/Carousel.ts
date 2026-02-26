@@ -93,8 +93,22 @@ export const Carousel = defineComponent({
     watch(currentSlideIndex, (val) => (activeSlideIndex.value = val))
     const prevSlideIndex = ref(0)
     const middleSlideIndex = computed(() => Math.ceil((slidesCount.value - 1) / 2))
-    const maxSlideIndex = computed(() => slidesCount.value - 1)
+    const maxSlideIndex = computed(() => {
+      // default behavior: last slide index
+      let max =  slidesCount.value - 1
+    
+      // If not wrapping and we're aligning to start,
+      // the "last valid start" is slidesCount - itemsToShow
+      if (!config.wrapAround && config.snapAlign === 'start') {
+        const itemsToShow = Number(config.itemsToShow || 1)
+        max = Math.max(0, slidesCount.value - itemsToShow)
+      }
+    
+      return max
+    })
     const minSlideIndex = computed(() => 0)
+
+
 
     let autoplayTimer: ReturnType<typeof setInterval> | null = null
     let transitionTimer: ReturnType<typeof setTimeout> | null = null
